@@ -1,0 +1,44 @@
+﻿td a {
+    font-size: 22px;
+    cursor:pointer;
+}
+
+.create {
+    font-size: 24px;
+}
+td .image{
+    width:100px;
+    height:100px;
+}
+.image{
+    width:300px;
+}
+
+
+.active-status {
+    width: 20px;
+    height: 20px;
+    background-color: greenyellow;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.de-active {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.img-detail {
+    width: 500px;
+}
+.delete-image{
+    font-size:18px;
+}
+
+.statutes {
+    width: 60px !important;
+}
+

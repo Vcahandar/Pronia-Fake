@@ -1,0 +1,302 @@
+﻿@model BlogVM
+@inject ILayoutService layout
+@inject IBannerService banner
+@inject UserManager<AppUser> userManager
+
+@{
+    ViewData["Title"] = "SingleBlog";
+    int? sumOfProductsCountByCategory = 0;
+}
+<!-- Begin Main Content Area -->
+<main class="main-content">
+    <div class="breadcrumb-area breadcrumb-height"
+         data-bg-image="/assets/images/website-images/@layout.GetSectionBackgroundImages()["BlogIntroBg"]">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-item">
+                        <h2 class="breadcrumb-heading">Blog</h2>
+                        <ul>
+                            <li>
+                                <a asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li>Blog Detail</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="blog-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-lg-4 order-2 pt-5 pt-lg-0">
+                    <div class="sidebar-area">
+                        <div class="widgets-searchbox">
+                            <form id="widgets-searchbox">
+                                <input class="input-field"
+                                       type="text"
+                                       placeholder="Search" />
+                                <button class="widgets-searchbox-btn" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="widgets-area">
+                            <div class="widgets-item pt-0">
+                                <h2 class="widgets-title mb-4">Categories</h2>
+                                <ul class="widgets-category">
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-chevron-right"></i>
+                                            All
+                                            @foreach (var item in Model?.Categories)
+                                            {
+                                                sumOfProductsCountByCategory += item.ProductCategories?.Count();
+                                            }
+                                            <span>(@sumOfProductsCountByCategory)</span>
+                                        </a>
+                                    </li>
+                                    @foreach (var category in Model?.Categories)
+                                    {
+                                        <li>
+                                            <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@category.Id" data-id="@category.Id" class="category">
+                                                <i class="fa fa-chevron-right"></i>
+                                                @category.Name
+                                                <span>(@category.ProductCategories?.Count())</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="widgets-item">
+                                <h2 class="widgets-title mb-4">Recent Post</h2>
+                                <div class="swiper-container widgets-list-slider">
+                                    <div class="swiper-wrapper">
+                                        @foreach (var item in Model?.Blogs)
+                                        {
+                                            <div class="swiper-slide">
+                                                <div class="widgets-list-item">
+                                                    <div class="widgets-list-img">
+                                                        <a href="#">
+                                                            <img class="img-full"
+                                                                 src="~/assets/images/website-images/@item.BlogImages.Where(b=>b.IsMain).FirstOrDefault().ImgName"
+                                                                 alt="Blog Images" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="widgets-list-content">
+                                                        <div class="widgets-meta">
+                                                            <ul>
+                                                                <li class="date">@item.CreatedDate.ToString("dd MMMM yyyy")</li>
+                                                            </ul>
+                                                        </div>
+                                                        <h2 class="title mb-0">
+                                                            <a href="#">@item.Description.Substring(0,26)</a>
+                                                        </h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        }
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widgets-item">
+                                <h2 class="widgets-title mb-4">Populer Tags</h2>
+                                <ul class="widgets-tag">
+                                    @foreach (var item in Model?.Tags)
+                                    {
+                                        <li>
+                                            <a asp-controller="Shop" asp-action="Index" asp-route-tagId="@item.Id">@item.Name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="banner-item widgets-banner img-hover-effect">
+                            <div class="banner-img">
+                                <img src="~/assets/images/website-images/@banner.GetAllAsync().Result.Where(b=>!b.IsLarge).FirstOrDefault().Image"
+                                     alt="Banner Image" />
+                            </div>
+                            <div class="banner-content text-position-center">
+                                <span class="collection">@Html.Raw(banner.GetAllAsync().Result.Where(b=>!b.IsLarge).FirstOrDefault().SubTitle)</span>
+                                <h3 class="title">@Html.Raw(banner.GetAllAsync().Result.Where(b=>!b.IsLarge).FirstOrDefault().Title)</h3>
+                                <div class="button-wrap">
+                                    <a class="btn btn-custom-size sm-size btn-pronia-primary"
+                                      asp-controller="Shop" asp-action="Index">Shop Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-8 order-1">
+                    <div class="blog-detail-item">
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <ul>
+                                    <li class="author">
+                                        <a href="#">By: Admin</a>
+                                    </li>
+                                    <li class="date">@Model.Blog.CreatedDate.ToString("dd MMMM yyyy")</li>
+                                </ul>
+                            </div>
+                            <h2 class="title">There Many Variations</h2>
+                            <p class="short-desc">
+                                @Model.Blog.Description.Substring(0,350);
+                            </p>
+                        </div>
+                        <div class="blog-img img-hover-effect">
+                            <img class="img-full"
+                                 src="~/assets/images/website-images/@Model.Blog.BlogImages?.Where(b=>b.IsMain).FirstOrDefault().ImgName"
+                                 alt="Blog Image" />
+                        </div>
+                        <p class="short-desc">
+                            @Model.Blog.Description.Substring(100,300);
+                        </p>
+                        <blockquote>
+                            <p class="mb-0">
+                                @Model.Blog.Description.Substring(200,220);
+                            </p>
+                        </blockquote>
+                        <p class="short-desc">
+                            @Model.Blog.Description.Substring(100,320);
+                        </p>
+                        <div class="blog-banner row">
+                            <div class="single-img img-hover-effect col-sm-6">
+                                <img class="img-full"
+                                     src="~/assets/images/website-images/@Model.Blog.BlogImages?.Where(b=>!b.IsMain).FirstOrDefault().ImgName"
+                                     alt="Blog Banner" />
+                            </div>
+                            <div class="single-img img-hover-effect col-sm-6 pt-5 pt-sm-0">
+                                <img class="img-full"
+                                     src="~/assets/images/website-images/@Model.Blog.BlogImages?.Where(b=>!b.IsMain).LastOrDefault().ImgName"
+                                     alt="Blog Banner" />
+                            </div>
+                        </div>
+                        <p class="short-desc mb-0">
+                            @Model.Blog.Description.Substring(320,500);
+                        </p>
+                    </div>
+                    <div class="social-with-tags">
+                        <div class="tags">
+                            <span class="title">Tags: </span>
+                            <ul>
+                                @foreach (var item in Model?.Tags.Take(3))
+                                {
+                                    <li>
+                                        <a asp-controller="Shop" asp-action="Index" asp-route-tagId="@item.Id">@item.Name</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="social-link">
+                            <ul>
+                                <li>
+                                    <a href="#"
+                                       data-tippy="Facebook"
+                                       data-tippy-inertia="true"
+                                       data-tippy-animation="shift-away"
+                                       data-tippy-delay="50"
+                                       data-tippy-arrow="true"
+                                       data-tippy-theme="sharpborder">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                       data-tippy="Dribbble"
+                                       data-tippy-inertia="true"
+                                       data-tippy-animation="shift-away"
+                                       data-tippy-delay="50"
+                                       data-tippy-arrow="true"
+                                       data-tippy-theme="sharpborder">
+                                        <i class="fa fa-dribbble"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#"
+                                       data-tippy="Pinterest"
+                                       data-tippy-inertia="true"
+                                       data-tippy-animation="shift-away"
+                                       data-tippy-delay="50"
+                                       data-tippy-arrow="true"
+                                       data-tippy-theme="sharpborder">
+                                        <i class="fa fa-pinterest-p"></i>
+                                    </a>
+                                </li>
+                                <li class="comment">
+                                    <a href="#">
+                                        <span>@Model.Blog.BlogComments.Count</span>
+                                        <i class="fa fa-comments"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="blog-comment">
+                            <h4 class="heading">Comments (@Model.Blog.BlogComments.Count)</h4>
+                            @foreach (var item in Model.Blog.BlogComments)
+                            {
+                            <div class="blog-comment-item">
+                                <div class="blog-comment-content">
+                                    <div class="user-meta">
+                                            <h2 class="user-name">@item.Name</h2>
+                                        <span class="date">@item.CreatedDate.ToString("dd MMMM yyyy")</span>
+                                    </div>
+                                        <p class="user-comment">
+                                            @item.Message
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                    </div>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="feedback-area">
+                            <h2 class="heading">Leave a comment</h2>
+                            <form class="feedback-form" method="post" asp-action="PostComment" asp-route-id="@Model.Blog.Id" asp-route-userId="@userManager.Users.FirstOrDefault(u=>u.UserName==User.Identity.Name).Id">
+                                <div class="group-input">
+                                    <div class="form-field me-md-30 mb-30 mb-md-0">
+                                        <input placeholder="Your Name*"
+                                               class="input-field"
+                                               readonly
+                                               value="@string.Join(" ", userManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name).FirstName, userManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name).LastName)"
+                                           asp-for="BlogCommentVM.Name" />
+
+                                    </div>
+                                    <div class="form-field">
+                                        <input placeholder="Your Email*"
+                                               class="input-field"
+                                               readonly
+                                           value="@userManager.Users.FirstOrDefault(u=>u.UserName==User.Identity.Name).Email"
+                                           asp-for="BlogCommentVM.Email" />
+                                    </div>
+                                </div>
+                                <div class="form-field mt-30">
+                                    <input placeholder="Subject (Optinal)"
+                                           class="input-field"
+                                       asp-for="BlogCommentVM.Subject" />
+                                </div>
+                                <div class="form-field mt-30">
+                                    <textarea placeholder="Message"
+                                              class="textarea-field"
+                                          asp-for="BlogCommentVM.Message"></textarea>
+                                </div>
+                                <div class="button-wrap pt-5">
+                                    <button type="submit"
+                                            class="btn btn-custom-size xl-size btn-pronia-primary">
+                                        Post Comment
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Main Content Area End Here -->
